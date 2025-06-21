@@ -15,6 +15,7 @@ def unique(labels):
             final_dict[i] += 1
         except Exception as e:
             final_dict[i] = 1
+    print(final_dict)
     return final_dict
 
 #print(df.columns)
@@ -34,8 +35,6 @@ for i in column:
         if not (isinstance(j, float) and np.isnan(j)):
             dict_for_classifying[i].append(j)
 
-print(dict_for_classifying)
-
 value_dict = {
     "Age": {
         "65 ans et plus": 1,
@@ -52,14 +51,12 @@ real_temp_dict = {}
 
 for j, y in dict_for_classifying.items():
     temp_dict = {}
-    for i, k in zip(y, range(len(j))):
+    for i, k in zip(y, range(len(y))):
         temp_dict.update({i: k})
 
     real_temp_dict.update({j:temp_dict})
 
-print(real_temp_dict)
-
-value_dict.update(dict_for_classifying)
+value_dict.update(real_temp_dict)
 selected_dict = {}
 
 for i in column:
@@ -78,9 +75,22 @@ for i in column:
             else:
                 selected_dict[i].append(j)
 
+labels = list(value_dict['Age'].keys())
 
-print(selected_dict)
+percent = unique(selected_dict["Age"])
+print(percent)
 
-plt.pie(x=unique(selected_dict["Age"]).values(), labels=list(value_dict['Age'].keys()))#, explode=list(value_dict['Age'].values()))
+percent2 = {}
+for i, j in percent.items():
+    percent2.update({i-min(list(percent.keys())): j})
+percent = percent2
+del percent2
+
+for i in range(len(labels)):
+    labels[i] += " " + str(round(percent[i] / sum(percent.values()) * 100, 3)) + "%"
+
+print(unique(selected_dict["Age"]).values(), selected_dict["Age"])
+
+plt.pie(x=unique(selected_dict["Age"]).values(), labels=labels)#, explode=list(value_dict['Age'].values()))
 plt.legend()
 plt.savefig("first_plt.png")
